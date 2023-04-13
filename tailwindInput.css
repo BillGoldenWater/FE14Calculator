@@ -1,0 +1,74 @@
+@tailwind base;
+
+:root {
+  height: 100%;
+  width: 100%;
+
+  @apply bg-slate-900 text-slate-200 font-mono;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (max-width: 800px) {
+  .root {
+    @apply flex flex-col p-6 gap-6;
+  }
+}
+
+@media (min-width: 800px) {
+  .root {
+    @apply grid grid-cols-2 p-6 gap-6;
+  }
+}
+
+.panel {
+  @apply p-2 w-full rounded-lg bg-slate-800 hover:shadow-lg shadow-black transition;
+}
+
+.panelHorizontal {
+  @apply flex flex-row gap-2 items-center
+}
+
+.panelMsg {
+  @apply p-4;
+}
+
+.panelMsgPlaceholder {
+  @apply text-slate-400;
+}
+
+.statItem {
+  @apply p-2 rounded-lg hover:bg-slate-700 hover:shadow-lg shadow-slate-950 transition;
+  @apply flex justify-between;
+}
+
+.statItem > span {
+  @apply block;
+}
+
+button {
+  @apply p-2 rounded-lg hover:bg-slate-700 hover:shadow-lg shadow-slate-950 transition active:bg-slate-600;
+}
+
+.inputItem {
+  @apply p-2 rounded-lg;
+}
+
+select {
+  -webkit-appearance: none;
+  @apply p-2 rounded-lg outline-none;
+  @apply border-solid border-2 border-slate-700;
+  @apply bg-slate-800;
+  @apply hover:bg-slate-700;
+  @apply focus:bg-slate-800 focus:border-slate-600;
+}
+
+.avatar {
+  @apply max-h-24;
+}
+
+.limitReached {
+  @apply text-green-400;
+}

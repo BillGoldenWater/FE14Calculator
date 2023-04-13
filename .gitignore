@@ -1,0 +1,8 @@
+**/dist/
+**/target/
+**/Cargo.lock
+.idea
+src-tauri/gen
+/dist
+styles.css
+**/node_modules

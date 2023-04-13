@@ -1,0 +1,46 @@
+{
+  "build": {
+    "beforeDevCommand": "trunk serve",
+    "beforeBuildCommand": "trunk build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist",
+    "withGlobalTauri": true
+  },
+  "package": {
+    "productName": "FE14 Calculator",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false
+    },
+    "bundle": {
+      "active": true,
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "indi.goldenwater.fe14calculator",
+      "targets": "all"
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "FE14 Calculator",
+        "width": 800,
+        "height": 772,
+        "alwaysOnTop": true
+      }
+    ]
+  }
+}
