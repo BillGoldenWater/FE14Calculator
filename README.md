@@ -10,6 +10,11 @@ FE 14 Calculator用于计算火焰纹章engage（FE 14）固定加点下的角�
 
 ## Credit:
 
+Code:
+
+- [Golden_Water](https://space.bilibili.com/41925356) (rust)
+- [火纹梅戚](https://space.bilibili.com/3493263910635905) (python)
+
 Data from:
 
 - [Pser_hanser](https://space.bilibili.com/43477533)
