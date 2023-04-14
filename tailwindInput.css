@@ -23,6 +23,7 @@
 @media (min-width: 45em) {
   .root {
     @apply grid grid-cols-2 p-6 gap-6;
+    width: 40rem;
   }
 }
 
