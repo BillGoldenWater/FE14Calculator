@@ -153,7 +153,7 @@ fn Stats(cx: Scope, #[prop(into)] character: Signal<Character>) -> impl IntoView
       .into_iter()
       .map(|it| {
         (
-          it.to_string(),
+          Stats::get_l10n(it),
           character.get_total_stat(it).unwrap(),
           character.get_upper_limit(it).unwrap(),
         )
