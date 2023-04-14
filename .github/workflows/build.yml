@@ -43,6 +43,9 @@ jobs:
       - name: install tauri-cli
         run: cargo install tauri-cli
 
+      - name: install trunk
+        run: cargo install trunk
+
       - name: build
         run: cargo tauri build
 
