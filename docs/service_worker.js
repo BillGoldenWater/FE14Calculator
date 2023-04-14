@@ -65,12 +65,15 @@ self.addEventListener("install", function (e) {
 /* Serve cached content when offline */
 self.addEventListener("fetch", function (e) {
   e.respondWith(
-    caches.match(e.request).then(async function (response) {
-      try {
-        return await fetch(e.request);
-      } catch (e) {
-        return response;
-      }
+    caches.match(e.request).then(function (response) {
+      fetch(e.request)
+        .then(async function (res) {
+          const cache = await caches.open(cacheName);
+          await cache.delete(e.request);
+          await cache.put(e.request, res);
+        })
+        .catch(() => undefined);
+      return response || fetch(e.request);
     })
   );
 });
