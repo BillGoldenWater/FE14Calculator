@@ -7,3 +7,4 @@ src-tauri/gen
 styles.css
 **/node_modules
 **/.DS_Store
+**/__pycache__
