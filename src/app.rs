@@ -112,9 +112,10 @@ pub fn App(cx: Scope) -> impl IntoView {
         </div>
         <div>
           <div class="statItem">
-            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span>"/"{lv_max}</span>
+            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span><span class="maximumLabel">"/"{lv_max}</span></span>
           </div>
           <div class="statItem">"隐藏LV: "{hlv}</div>
+          <div class="statItem">"总LV: "{move || lv() + hlv()}</div>
         </div>
       </div>
       <div class="panel">
@@ -162,9 +163,15 @@ fn Stats(cx: Scope, #[prop(into)] character: Signal<Character>) -> impl IntoView
         let limitReachedClass = if stat == limit { "limitReached" } else { "" };
 
         view! {cx,
-          <div class="statItem"><span>{k}": "</span><span class={limitReachedClass}>{format!("{:.2}", stat as f64 / 100.0)}</span></div>
+          <div class="statItem">
+            <span>{k}": "</span>
+            <span>
+              <span class={limitReachedClass}>{format!("{:.2}", stat as f64 / 100.0)}</span>
+              <span class="maximumLabel">"/"{limit / 100}</span>
+            </span>
+          </div>
         }
-      })
+      })  
       .collect::<Vec<_>>()
   };
 

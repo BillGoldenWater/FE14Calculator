@@ -73,3 +73,8 @@ select {
 .limitReached {
   @apply text-green-400;
 }
+
+.maximumLabel {
+  font-size: 0.8rem;
+  @apply text-slate-400;
+}
