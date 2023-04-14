@@ -74,8 +74,7 @@ self.addEventListener("fetch", function (e) {
             const cache = await caches.open(cacheName);
             await cache.delete(e.request);
             await cache.put(e.request, res);
-          })
-          .catch(() => undefined);
+          });
         return response;
       } else {
         return fetch(e.request);
