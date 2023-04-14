@@ -90,32 +90,11 @@ pub fn App(cx: Scope) -> impl IntoView {
   view! { cx,
     <div class="root">
       <div class="panel">
-        <div class="inputItem">
-          "角色: "
+        <div class="inputItem horizontalBox">
+          <img class="avatar" src=avatar/>
           <select on:change=select_character prop:value=cur_character>
             {characters}
           </select>
-        </div>
-        <div class="inputItem">
-          "星玉加护: "
-          <input type="checkbox" prop:value=move || enhanced.get() on:click=move |_| {set_enhanced.update(|it| *it = !*it)}/>
-        </div>
-        <div class="inputItem">
-          "努力才能: "
-          <input type="checkbox" prop:value=move || doubled.get() on:click=move |_| {set_doubled.update(|it| *it = !*it)}/>
-        </div>
-      </div>
-      <div class="panel">
-        <div>
-          <button on:click=lvl_up>"升级"</button>
-          <button on:click=reset>"重置"</button>
-        </div>
-        <div>
-          <div class="statItem">
-            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span><span class="maximumLabel">"/"{lv_max}</span></span>
-          </div>
-          <div class="statItem">"隐藏LV: "{hlv}</div>
-          <div class="statItem">"总LV: "{move || lv() + hlv()}</div>
         </div>
       </div>
       <div class="panel">
@@ -128,7 +107,31 @@ pub fn App(cx: Scope) -> impl IntoView {
         <button on:click=use_second_seal>"横转"</button>
       </div>
       <div class="panel">
-        <img class="avatar" src=avatar/>
+        <div>
+          <div class="statItem">
+            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span><span class="maximumLabel">"/"{lv_max}</span></span>
+          </div>
+          <div class="horizontalBox">
+            <div class="statItem">"隐藏LV: "{hlv}</div>
+            <div class="statItem">"总LV: "{move || lv() + hlv()}</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel horizontalBox">
+        <div class="verticalBox">
+          <button on:click=lvl_up>"升级"</button>
+          <button on:click=reset>"重置"</button>
+        </div>
+        <div>
+          <div class="inputItem">
+            "星玉加护: "
+            <input type="checkbox" prop:value=move || enhanced.get() on:click=move |_| {set_enhanced.update(|it| *it = !*it)}/>
+          </div>
+          <div class="inputItem">
+            "努力才能: "
+            <input type="checkbox" prop:value=move || doubled.get() on:click=move |_| {set_doubled.update(|it| *it = !*it)}/>
+          </div>
+        </div>
       </div>
       <Stats character=character/>
       {move || if !last_message.get().is_empty() {
@@ -171,7 +174,7 @@ fn Stats(cx: Scope, #[prop(into)] character: Signal<Character>) -> impl IntoView
             </span>
           </div>
         }
-      })  
+      })
       .collect::<Vec<_>>()
   };
 
