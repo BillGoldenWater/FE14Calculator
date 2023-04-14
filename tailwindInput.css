@@ -17,7 +17,7 @@
 @media (max-width: 45rem) {
   .root {
     @apply flex flex-col p-6 gap-6;
-    width: 100vw;
+    width: 100%;
     max-width: 25rem;
   }
 }
