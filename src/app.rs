@@ -5,6 +5,7 @@
 
 use leptos::ev::Event;
 use leptos::*;
+use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 
 use fe14_calculator_core::character::{Character, CHARACTERS};
 use fe14_calculator_core::class::{Class, CLASSES};
@@ -17,6 +18,16 @@ pub fn App(cx: Scope) -> impl IntoView {
   let (last_message, set_last_message) = create_signal(cx, String::new());
   let (enhanced, set_enhanced) = create_signal(cx, false);
   let (doubled, set_doubled) = create_signal(cx, false);
+
+  let msg_box_ref = create_node_ref::<html::Div>(cx);
+  let update_msg_box = move |msg: String| {
+    set_last_message.set(msg);
+    if let Some(msg_box) = msg_box_ref.get() {
+      msg_box.scroll_into_view_with_scroll_into_view_options(
+        ScrollIntoViewOptions::new().behavior(ScrollBehavior::Smooth),
+      );
+    }
+  };
 
   let cur_character = move || character.get().name;
   let cur_class = move || character.get().cur_attribute.class;
@@ -31,7 +42,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     set_character.update(|character| {
       let result = character.level_up(enhanced.get(), doubled.get());
       if let Err(err) = result {
-        set_last_message.set(err.to_string());
+        update_msg_box(err.to_string());
       }
     })
   };
@@ -50,7 +61,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     set_character.update(|character| {
       let result = character.change_class(Class::find(&target_class).unwrap());
       if let Err(err) = result {
-        set_last_message.set(err.to_string());
+        update_msg_box(err.to_string());
       }
     })
   };
@@ -59,7 +70,7 @@ pub fn App(cx: Scope) -> impl IntoView {
       let result =
         character.change_class(Class::find(&character.cur_attribute.class.clone()).unwrap());
       if let Err(err) = result {
-        set_last_message.set(err.to_string());
+        update_msg_box(err.to_string());
       }
     })
   };
@@ -136,13 +147,13 @@ pub fn App(cx: Scope) -> impl IntoView {
       <Stats character=character/>
       {move || if !last_message.get().is_empty() {
         view! {cx,
-          <div class="panel panelMsg">
+          <div _ref=msg_box_ref class="panel panelMsg">
             {last_message}
           </div>
         }
       } else {
         view! { cx,
-          <div class="panel panelMsg panelMsgPlaceholder">"message output"</div>
+          <div _ref=msg_box_ref class="panel panelMsg panelMsgPlaceholder">"message output"</div>
         }
       }}
     </div>
