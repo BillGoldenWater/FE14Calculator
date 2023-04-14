@@ -5,19 +5,20 @@
   width: 100%;
 
   @apply bg-slate-900 text-slate-200 font-mono;
+  font-size: 0.45cm;
 }
 
 * {
   box-sizing: border-box;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 45em) {
   .root {
     @apply flex flex-col p-6 gap-6;
   }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 45em) {
   .root {
     @apply grid grid-cols-2 p-6 gap-6;
   }
