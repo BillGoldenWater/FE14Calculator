@@ -25,7 +25,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
   let lv = move || character.get().get_lv();
   let lv_max = move || character.get().get_max_lv().unwrap();
-  let hlv = move || character.get().get_lv();
+  let hlv = move || character.get().get_hlv();
 
   let lvl_up = move |_| {
     set_character.update(|character| {

@@ -568,7 +568,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('fe14_calculator_ui-3f1fb50c200ff62f_bg.wasm', import.meta.url);
+        input = new URL('fe14_calculator_ui-2e8433a9c17d17a4_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
