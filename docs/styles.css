@@ -533,16 +533,18 @@ video {
   box-sizing: border-box;
 }
 
-@media (max-width: 45em) {
+@media (max-width: 45rem) {
   .root {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     padding: 1.5rem;
+    width: 100vw;
+    max-width: 25rem;
   }
 }
 
-@media (min-width: 45em) {
+@media (min-width: 45rem) {
   .root {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
