@@ -4,7 +4,7 @@
     "beforeBuildCommand": "trunk build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
-    "withGlobalTauri": true
+    "withGlobalTauri": false
   },
   "package": {
     "productName": "FE14 Calculator",
@@ -24,7 +24,24 @@
         "icons/icon.ico"
       ],
       "identifier": "indi.goldenwater.fe14calculator",
-      "targets": "all"
+      "targets": "all",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null,
+        "license": "../COPYING"
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "zh-CN",
+          "license": "../COPYING"
+        }
+      }
     },
     "security": {
       "csp": null
