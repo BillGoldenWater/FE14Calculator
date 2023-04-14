@@ -46,6 +46,9 @@ jobs:
       - name: install trunk
         run: cargo install trunk
 
+      - name: add target wasm32-unknown-unknown
+        run: rustup target add wasm32-unknown-unknown
+
       - name: build
         run: cargo tauri build
 
