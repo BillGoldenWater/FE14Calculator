@@ -525,6 +525,8 @@ video {
   --tw-text-opacity: 1;
   color: rgb(226 232 240 / var(--tw-text-opacity));
   font-size: 0.45cm;
+  display: flex;
+  justify-content: center;
 }
 
 * {
@@ -641,6 +643,9 @@ button:active {
 }
 
 .inputItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-radius: 0.5rem;
   padding: 0.5rem;
 }
@@ -678,4 +683,20 @@ select:focus {
 .limitReached {
   --tw-text-opacity: 1;
   color: rgb(74 222 128 / var(--tw-text-opacity));
+}
+
+.maximumLabel {
+  font-size: 0.8rem;
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+.horizontalBox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.verticalBox {
+  display: flex;
+  flex-direction: column;
 }

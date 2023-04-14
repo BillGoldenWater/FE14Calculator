@@ -4,7 +4,7 @@
 .idea
 src-tauri/gen
 /dist
-styles.css
+/styles.css
 **/node_modules
 **/.DS_Store
 **/__pycache__

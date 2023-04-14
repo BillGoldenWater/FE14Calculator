@@ -526,12 +526,12 @@ function getImports() {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper947 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper960 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 9, __wbg_adapter_20);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper2087 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 322, __wbg_adapter_23);
+    imports.wbg.__wbindgen_closure_wrapper2100 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 325, __wbg_adapter_23);
         return addHeapObject(ret);
     };
 
@@ -568,7 +568,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('fe14_calculator_ui-8a4883966c1022d2_bg.wasm', import.meta.url);
+        input = new URL('fe14_calculator_ui_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 

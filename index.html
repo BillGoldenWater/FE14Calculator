@@ -3,9 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="rgb(15 23 42)" />
+
     <title>FE14 Calculator</title>
     <link data-trunk rel="css" href="styles.css" />
     <link data-trunk rel="copy-dir" href="public" />
-    <link data-trunk rel="rust" data-wasm-opt="z" />
+    <link data-trunk rel="rust" data-wasm-opt="s" />
+
+    <link data-trunk rel="copy-file" href="manifest.json">
+    <link data-trunk rel="copy-file" href="app-icon-512.png">
+    <link data-trunk rel="copy-file" href="service_worker.js">
+    <link rel="manifest" href="manifest.json">
+
+    <script>
+      // register ServiceWorker
+      window.onload = () => {
+        'use strict';
+
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker
+                  .register('./service_worker.js');
+        }
+      }
+    </script>
   </head>
 </html>

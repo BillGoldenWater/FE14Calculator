@@ -1,12 +1,31 @@
 <!DOCTYPE html><html lang="zh"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="rgb(15 23 42)">
+
     <title>FE14 Calculator</title>
-    <link rel="stylesheet" href="/styles-5a37a769015b2d30.css">
+    <link rel="stylesheet" href="/styles.css">
     
-    <script type="module">import init from '/fe14_calculator_ui-8a4883966c1022d2.js';init('/fe14_calculator_ui-8a4883966c1022d2_bg.wasm');</script>
+    <script type="module">import init from '/fe14_calculator_ui.js';init('/fe14_calculator_ui_bg.wasm');</script>
+
+    
+    
+    
+    <link rel="manifest" href="manifest.json">
+
+    <script>
+      // register ServiceWorker
+      window.onload = () => {
+        'use strict';
+
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker
+                  .register('./service_worker.js');
+        }
+      }
+    </script>
   
-<link rel="preload" href="/fe14_calculator_ui-8a4883966c1022d2_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
-<link rel="modulepreload" href="/fe14_calculator_ui-8a4883966c1022d2.js"></head>
+<link rel="preload" href="/fe14_calculator_ui_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/fe14_calculator_ui.js"></head>
 <body>
 </body></html>
