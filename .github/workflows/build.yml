@@ -33,7 +33,7 @@ jobs:
           version: 1.0
 
       - name: yarn install
-        run: cd frontend && yarn install
+        run: yarn install
         shell: "bash"
 
       - name: install tauri-cli
