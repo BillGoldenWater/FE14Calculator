@@ -66,14 +66,18 @@ self.addEventListener("install", function (e) {
 self.addEventListener("fetch", function (e) {
   e.respondWith(
     caches.match(e.request).then(function (response) {
-      fetch(e.request)
-        .then(async function (res) {
-          const cache = await caches.open(cacheName);
-          await cache.delete(e.request);
-          await cache.put(e.request, res);
-        })
-        .catch(() => undefined);
-      return response || fetch(e.request);
+      if (response) {
+        fetch(e.request)
+          .then(async function (res) {
+            const cache = await caches.open(cacheName);
+            await cache.delete(e.request);
+            await cache.put(e.request, res);
+          })
+          .catch(() => undefined);
+        return response;
+      } else {
+        return fetch(e.request);
+      }
     })
   );
 });
