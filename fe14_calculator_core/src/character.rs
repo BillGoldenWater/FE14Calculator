@@ -13,6 +13,8 @@ use crate::class::{Class, CLASSES};
 use crate::class_type::ClassType;
 use crate::stats::Stats;
 
+pub mod character_with_undo;
+
 pub static CHARACTERS: Lazy<Vec<Character>> = Lazy::new(|| {
   serde_json::from_str::<Vec<Character>>(include_str!("character.json"))
     .expect("failed to load character")
@@ -31,6 +33,7 @@ pub struct Character {
   #[serde(default)]
   pub cur_attribute: Attribute,
 }
+
 impl Character {
   pub fn find(character_name: &str) -> Option<&Character> {
     CHARACTERS.iter().find(|it| it.name.eq(&character_name))

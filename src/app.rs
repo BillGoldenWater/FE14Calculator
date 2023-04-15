@@ -7,6 +7,7 @@ use leptos::ev::Event;
 use leptos::*;
 use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 
+use fe14_calculator_core::character::character_with_undo::CharacterWithUndo;
 use fe14_calculator_core::character::{Character, CHARACTERS};
 use fe14_calculator_core::class::{Class, CLASSES};
 use fe14_calculator_core::stats::Stats;
@@ -14,7 +15,10 @@ use fe14_calculator_core::stats::Stats;
 //noinspection DuplicatedCode
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
-  let (character, set_character) = create_signal(cx, CHARACTERS.get(0).cloned().unwrap());
+  let (character, set_character) = create_signal(
+    cx,
+    CharacterWithUndo::new(CHARACTERS.get(0).cloned().unwrap()),
+  );
   let (last_message, set_last_message) = create_signal(cx, String::new());
   let (enhanced, set_enhanced) = create_signal(cx, false);
   let (doubled, set_doubled) = create_signal(cx, false);
@@ -29,14 +33,16 @@ pub fn App(cx: Scope) -> impl IntoView {
     }
   };
 
-  let cur_character = move || character.get().name;
-  let cur_class = move || character.get().cur_attribute.class;
+  let character = move || character.get().get();
 
-  let avatar = move || format!("public/avatar/{}.webp", character.get().name);
+  let cur_character = move || character().name;
+  let cur_class = move || character().cur_attribute.class;
 
-  let lv = move || character.get().get_lv();
-  let lv_max = move || character.get().get_max_lv().unwrap();
-  let hlv = move || character.get().get_hlv();
+  let avatar = move || format!("public/avatar/{}.webp", character().name);
+
+  let lv = move || character().get_lv();
+  let lv_max = move || character().get_max_lv().unwrap();
+  let hlv = move || character().get_hlv();
 
   let lvl_up = move |_| {
     set_character.update(|character| {
@@ -48,13 +54,33 @@ pub fn App(cx: Scope) -> impl IntoView {
   };
   let reset = move |_| {
     set_character.update(|character| {
-      *character = character.clone().init().unwrap();
+      if let Some(window) = web_sys::window() {
+        if !window
+          .confirm_with_message("确定重置吗, 此操作不可撤销")
+          .unwrap_or(false)
+        {
+          return;
+        }
+      }
+      *character = CharacterWithUndo::new(character.get().init().unwrap());
+    })
+  };
+  let undo = move |_| {
+    set_character.update(|character| {
+      character.undo();
+    })
+  };
+  let redo = move |_| {
+    set_character.update(|character| {
+      character.redo();
     })
   };
 
   let select_character = move |ev: Event| {
     let target_character = event_target_value(&ev);
-    set_character.set(Character::find(&target_character).unwrap().clone())
+    set_character.set(CharacterWithUndo::new(
+      Character::find(&target_character).unwrap().clone(),
+    ))
   };
   let select_class = move |ev: Event| {
     let target_class = event_target_value(&ev);
@@ -68,7 +94,7 @@ pub fn App(cx: Scope) -> impl IntoView {
   let use_second_seal = move |_| {
     set_character.update(|character| {
       let result =
-        character.change_class(Class::find(&character.cur_attribute.class.clone()).unwrap());
+        character.change_class(Class::find(&character.get().cur_attribute.class.clone()).unwrap());
       if let Err(err) = result {
         update_msg_box(err.to_string());
       }
@@ -91,7 +117,7 @@ pub fn App(cx: Scope) -> impl IntoView {
   };
 
   let lvlLimitReachedClass = move || {
-    if character.get().get_lv() == character.get().get_max_lv().unwrap() {
+    if character().get_lv() == character().get_max_lv().unwrap() {
       "limitReached"
     } else {
       ""
@@ -129,9 +155,15 @@ pub fn App(cx: Scope) -> impl IntoView {
         </div>
       </div>
       <div class="panel horizontalBox">
-        <div class="verticalBox">
-          <button on:click=lvl_up>"升级"</button>
-          <button on:click=reset>"重置"</button>
+        <div class="horizontalBox">
+          <div class="verticalBox">
+            <button on:click=lvl_up>"升级"</button>
+            <button on:click=reset>"重置"</button>
+          </div>
+          <div class="verticalBox">
+            <button on:click=undo>"撤销"</button>
+            <button on:click=redo>"重做"</button>
+          </div>
         </div>
         <div>
           <div class="inputItem">
@@ -144,7 +176,7 @@ pub fn App(cx: Scope) -> impl IntoView {
           </div>
         </div>
       </div>
-      <Stats character=character/>
+      <Stats character=Signal::derive(cx, character)/>
       {move || if !last_message.get().is_empty() {
         view! {cx,
           <div _ref=msg_box_ref class="panel panelMsg">
