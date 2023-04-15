@@ -49,6 +49,52 @@ impl CharacterWithUndo {
     character
   }
 
+  pub fn get_operations(&self) -> Vec<CharacterOperationItem> {
+    let mut character = self.character.clone();
+    let mut operation_items = vec![CharacterOperationItem::LevelUp {
+      cur_lvl: character.get_lv(),
+      need: UndoOrRedo::Undo(self.operations.len() as i32),
+      enhanced: false,
+      doubled: false,
+    }];
+
+    let mut do_operation = |op: &CharacterOperation, need: UndoOrRedo| match op {
+      CharacterOperation::LevelUp { enhanced, doubled } => {
+        let _ = character.level_up(*enhanced, *doubled);
+        operation_items.push(CharacterOperationItem::LevelUp {
+          need,
+
+          cur_lvl: character.get_lv(),
+          enhanced: *enhanced,
+          doubled: *doubled,
+        })
+      }
+      CharacterOperation::ChangeClass(dst_class) => {
+        let prev_class = Class::find(&character.cur_attribute.class).unwrap();
+        let _ = character.change_class(dst_class);
+        operation_items.push(CharacterOperationItem::ChangeClass {
+          need,
+
+          prev_class,
+          dst_class,
+        })
+      }
+    };
+
+    let mut undo_count = (self.operations.len() as i32) - 1;
+    for op in &self.operations {
+      do_operation(op, UndoOrRedo::Undo(undo_count));
+      undo_count -= 1;
+    }
+
+    for op in self.redo_operations.iter().rev() {
+      do_operation(op, UndoOrRedo::Redo(undo_count.abs()));
+      undo_count -= 1;
+    }
+
+    operation_items
+  }
+
   fn do_op(&mut self, op: CharacterOperation) {
     self.operations.push(op);
     self.redo_operations.clear();
@@ -71,4 +117,25 @@ impl CharacterWithUndo {
 enum CharacterOperation {
   LevelUp { enhanced: bool, doubled: bool },
   ChangeClass(&'static Class),
+}
+
+#[derive(Debug)]
+pub enum CharacterOperationItem {
+  LevelUp {
+    need: UndoOrRedo,
+    cur_lvl: i32,
+    enhanced: bool,
+    doubled: bool,
+  },
+  ChangeClass {
+    need: UndoOrRedo,
+    prev_class: &'static Class,
+    dst_class: &'static Class,
+  },
+}
+
+#[derive(Debug)]
+pub enum UndoOrRedo {
+  Undo(i32),
+  Redo(i32),
 }

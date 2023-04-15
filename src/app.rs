@@ -5,9 +5,10 @@
 
 use leptos::ev::Event;
 use leptos::*;
-use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 
-use fe14_calculator_core::character::character_with_undo::CharacterWithUndo;
+use fe14_calculator_core::character::character_with_undo::{
+  CharacterOperationItem, CharacterWithUndo, UndoOrRedo,
+};
 use fe14_calculator_core::character::{Character, CHARACTERS};
 use fe14_calculator_core::class::{Class, CLASSES};
 use fe14_calculator_core::stats::Stats;
@@ -15,25 +16,20 @@ use fe14_calculator_core::stats::Stats;
 //noinspection DuplicatedCode
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
-  let (character, set_character) = create_signal(
+  let rw_character = create_rw_signal(
     cx,
     CharacterWithUndo::new(CHARACTERS.get(0).cloned().unwrap()),
   );
-  let (last_message, set_last_message) = create_signal(cx, String::new());
   let (enhanced, set_enhanced) = create_signal(cx, false);
   let (doubled, set_doubled) = create_signal(cx, false);
 
-  let msg_box_ref = create_node_ref::<html::Div>(cx);
   let update_msg_box = move |msg: String| {
-    set_last_message.set(msg);
-    if let Some(msg_box) = msg_box_ref.get() {
-      msg_box.scroll_into_view_with_scroll_into_view_options(
-        ScrollIntoViewOptions::new().behavior(ScrollBehavior::Smooth),
-      );
+    if let Some(window) = web_sys::window() {
+      let _ = window.alert_with_message(&msg);
     }
   };
 
-  let character = move || character.get().get();
+  let character = move || rw_character.get().get();
 
   let cur_character = move || character().name;
   let cur_class = move || character().cur_attribute.class;
@@ -45,7 +41,7 @@ pub fn App(cx: Scope) -> impl IntoView {
   let hlv = move || character().get_hlv();
 
   let lvl_up = move |_| {
-    set_character.update(|character| {
+    rw_character.update(|character| {
       let result = character.level_up(enhanced.get(), doubled.get());
       if let Err(err) = result {
         update_msg_box(err.to_string());
@@ -53,10 +49,10 @@ pub fn App(cx: Scope) -> impl IntoView {
     })
   };
   let reset = move |_| {
-    set_character.update(|character| {
+    rw_character.update(|character| {
       if let Some(window) = web_sys::window() {
         if !window
-          .confirm_with_message("确定重置吗, 此操作不可撤销")
+          .confirm_with_message("将重置为此人物的初期兵种、等级\n此操作不可撤销")
           .unwrap_or(false)
         {
           return;
@@ -66,25 +62,25 @@ pub fn App(cx: Scope) -> impl IntoView {
     })
   };
   let undo = move |_| {
-    set_character.update(|character| {
+    rw_character.update(|character| {
       character.undo();
     })
   };
   let redo = move |_| {
-    set_character.update(|character| {
+    rw_character.update(|character| {
       character.redo();
     })
   };
 
   let select_character = move |ev: Event| {
     let target_character = event_target_value(&ev);
-    set_character.set(CharacterWithUndo::new(
+    rw_character.set(CharacterWithUndo::new(
       Character::find(&target_character).unwrap().clone(),
     ))
   };
   let select_class = move |ev: Event| {
     let target_class = event_target_value(&ev);
-    set_character.update(|character| {
+    rw_character.update(|character| {
       let result = character.change_class(Class::find(&target_class).unwrap());
       if let Err(err) = result {
         update_msg_box(err.to_string());
@@ -92,7 +88,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     })
   };
   let use_second_seal = move |_| {
-    set_character.update(|character| {
+    rw_character.update(|character| {
       let result =
         character.change_class(Class::find(&character.get().cur_attribute.class).unwrap());
       if let Err(err) = result {
@@ -177,17 +173,9 @@ pub fn App(cx: Scope) -> impl IntoView {
         </div>
       </div>
       <Stats character=Signal::derive(cx, character)/>
-      {move || if !last_message.get().is_empty() {
-        view! {cx,
-          <div _ref=msg_box_ref class="panel panelMsg">
-            {last_message}
-          </div>
-        }
-      } else {
-        view! { cx,
-          <div _ref=msg_box_ref class="panel panelMsg panelMsgPlaceholder">"message output"</div>
-        }
-      }}
+      <div class="panel panelMsg">
+        <OperationHistory rw_character=rw_character/>
+      </div>
     </div>
   }
 }
@@ -225,5 +213,66 @@ fn Stats(cx: Scope, #[prop(into)] character: Signal<Character>) -> impl IntoView
     <div class="panel">
       {values}
     </div>
+  }
+}
+
+#[component]
+fn OperationHistory(cx: Scope, rw_character: RwSignal<CharacterWithUndo>) -> impl IntoView {
+  let items = move || {
+    rw_character
+      .get()
+      .get_operations()
+      .into_iter()
+      .rev()
+      .map(|it| {
+        let (need, text) = match it {
+          CharacterOperationItem::LevelUp {
+            need,
+            cur_lvl,
+            enhanced,
+            doubled,
+          } => (
+            need,
+            format!(
+              "{prev_lvl} -> {cur_lvl} 星玉: {enhanced} 努力: {doubled}",
+              prev_lvl = cur_lvl - 1,
+              enhanced = if enhanced { "是" } else { "否" },
+              doubled = if doubled { "是" } else { "否" },
+            ),
+          ),
+          CharacterOperationItem::ChangeClass {
+            need,
+            prev_class,
+            dst_class,
+          } => (need, format!("{} -> {}", prev_class.name, dst_class.name)),
+        };
+
+        let (num, move_one): (i32, fn(&mut CharacterWithUndo) -> ()) = match need {
+          UndoOrRedo::Undo(size) => (size, CharacterWithUndo::undo),
+          UndoOrRedo::Redo(size) => (size, CharacterWithUndo::redo),
+        };
+        let is_current = num == 0;
+
+        let move_to = move |_| {
+          rw_character.update(|character| {
+            for _ in 0..num {
+              move_one(character)
+            }
+          });
+        };
+
+        view! { cx,
+          <button class="historyItem" on:click=move_to>
+            <span class={if is_current {"limitReached"} else {""}}>
+              {text}
+            </span>
+          </button>
+        }
+      })
+      .collect::<Vec<_>>()
+  };
+
+  view! { cx,
+    <div class="historyList">{items}</div>
   }
 }

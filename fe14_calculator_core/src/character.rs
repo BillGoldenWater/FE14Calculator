@@ -147,6 +147,7 @@ impl Character {
 
     if cur_cls.eq(dst_class) && self.get_max_lv()? > self.get_lv() {
       return Err(CharacterError::UseSecondSealWhenNotMaxLvl {
+        class: cur_cls.name,
         current: self.get_lv(),
         required: self.get_max_lv()?,
       });
@@ -203,12 +204,16 @@ type ChResult<T> = Result<T, CharacterError>;
 pub enum CharacterError {
   #[error("invalid current class {0}")]
   InvalidCurrentClass(String),
-  #[error("已达到最大等级 {0}")]
+  #[error("已达到等级上限 LV.{0}")]
   MaxLevelReached(i32),
-  #[error("不能在未满级时横转, 当前等级: {current}, 需要: {required}")]
-  UseSecondSealWhenNotMaxLvl { current: i32, required: i32 },
-  #[error("不能在等级未达到 21 级时从特殊兵种转换至高级兵种, 当前等级 {0}")]
+  #[error("转职为 {class} 需要 {class} LV.{required}, 当前LV.{current}")]
+  UseSecondSealWhenNotMaxLvl {
+    class: String,
+    current: i32,
+    required: i32,
+  },
+  #[error("转职高级兵种需要特殊兵种 LV.21, 当前 LV.{0}")]
   ChangeToAdvWhenSpecialAndLvlNotMeet(i32),
-  #[error("不能在等级未达到 10 级时从基础兵种转换至高级兵种, 当前等级 {0}")]
+  #[error("转职高级兵种需要基础兵种 LV.10, 当前 LV.{0}")]
   ChangeToAdvWhenBasicAndLvlNotMeet(i32),
 }
