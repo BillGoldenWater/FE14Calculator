@@ -94,7 +94,7 @@ pub fn App(cx: Scope) -> impl IntoView {
   let use_second_seal = move |_| {
     set_character.update(|character| {
       let result =
-        character.change_class(Class::find(&character.get().cur_attribute.class.clone()).unwrap());
+        character.change_class(Class::find(&character.get().cur_attribute.class).unwrap());
       if let Err(err) = result {
         update_msg_box(err.to_string());
       }

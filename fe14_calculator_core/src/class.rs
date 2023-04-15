@@ -23,7 +23,7 @@ pub struct Class {
 }
 
 impl Class {
-  pub fn find(class_name: &str) -> Option<&Class> {
-    CLASSES.iter().find(|it| it.name.eq(&class_name))
+  pub fn find(class_name: &str) -> Option<&'static Class> {
+    CLASSES.iter().find(|it| it.name.eq(class_name))
   }
 }

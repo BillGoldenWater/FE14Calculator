@@ -28,9 +28,9 @@ impl CharacterWithUndo {
     Ok(())
   }
 
-  pub fn change_class(&mut self, dst_class: &Class) -> ChResult<()> {
+  pub fn change_class(&mut self, dst_class: &'static Class) -> ChResult<()> {
     self.get().change_class(dst_class)?;
-    self.do_op(CharacterOperation::ChangeClass(dst_class.clone()));
+    self.do_op(CharacterOperation::ChangeClass(dst_class));
     Ok(())
   }
 
@@ -70,5 +70,5 @@ impl CharacterWithUndo {
 #[derive(Debug, Clone, Eq, PartialEq)]
 enum CharacterOperation {
   LevelUp { enhanced: bool, doubled: bool },
-  ChangeClass(Class),
+  ChangeClass(&'static Class),
 }
