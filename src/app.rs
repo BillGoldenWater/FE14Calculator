@@ -210,30 +210,40 @@ fn OperationHistory(cx: Scope, rw_character: RwSignal<CharacterWithUndo>) -> imp
       .into_iter()
       .rev()
       .map(|it| {
-        let (need, text) = match it {
+        let (need, content) = match it {
           CharacterOperationItem::LevelUp {
             need,
             cur_class,
             cur_lvl,
+            is_max,
           } => (
             need,
-            format!(
-              "{} Lv. {prev_lvl} -> {cur_lvl}",
-              get_pure_name(&cur_class.name),
-              prev_lvl = (cur_lvl - 1).max(1),
-            ),
+            view! {cx,
+              <>
+                {format!(
+                  "{} Lv. {prev_lvl} -> ",
+                  get_pure_name(&cur_class.name),
+                  prev_lvl = (cur_lvl - 1).max(1),
+                )}<span class={if is_max {"limitReached"} else {""}}>{cur_lvl}</span>
+              </>
+            },
           ),
           CharacterOperationItem::ChangeClass {
             need,
             prev_class,
+            prev_lv,
+            prev_is_max,
             dst_class,
+            dst_lv,
           } => (
             need,
-            format!(
-              "{} -> {}",
-              get_pure_name(&prev_class.name),
-              get_pure_name(&dst_class.name)
-            ),
+            view! {cx,
+              <>
+                {get_pure_name(&prev_class.name)}" Lv."<span class={if prev_is_max {"limitReached"} else {""}}>{prev_lv}</span>
+                " -> "
+                {get_pure_name(&dst_class.name)}" Lv."{dst_lv}
+              </>
+            },
           ),
         };
 
@@ -254,7 +264,7 @@ fn OperationHistory(cx: Scope, rw_character: RwSignal<CharacterWithUndo>) -> imp
         view! { cx,
           <button class="historyItem" on:click=move_to>
             <span class={if is_current {""} else {"secondaryText"}}>
-              {text}
+              {content}
             </span>
           </button>
         }

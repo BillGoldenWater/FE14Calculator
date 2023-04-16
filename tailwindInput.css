@@ -93,6 +93,14 @@ select {
   @apply flex justify-start;
 }
 
+.historyItem > span {
+  @apply text-left;
+}
+
+.secondaryText .limitReached {
+  @apply text-green-700;
+}
+
 .secondaryText {
   font-size: 0.9rem;
   @apply text-slate-400;

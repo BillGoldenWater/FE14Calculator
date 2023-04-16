@@ -57,6 +57,7 @@ impl CharacterWithUndo {
       cur_class,
       cur_lvl: character.get_lv(),
       need: UndoOrRedo::Undo(self.operations.len() as i32),
+      is_max: false,
     }];
 
     let mut do_operation = |op: &CharacterOperation, need: UndoOrRedo| match op {
@@ -68,16 +69,23 @@ impl CharacterWithUndo {
 
           cur_class,
           cur_lvl: character.get_lv(),
+          is_max: character.get_lv() == character.get_max_lv().unwrap(),
         })
       }
       CharacterOperation::ChangeClass(dst_class) => {
         let prev_class = Class::find(&character.cur_attribute.class).unwrap();
+        let prev_lv = character.get_lv();
+        let prev_is_max = prev_lv == character.get_max_lv().unwrap();
         let _ = character.change_class(dst_class);
+        let dst_lv = character.get_lv();
         operation_items.push(CharacterOperationItem::ChangeClass {
           need,
 
           prev_class,
+          prev_lv,
+          prev_is_max,
           dst_class,
+          dst_lv,
         })
       }
     };
@@ -126,11 +134,15 @@ pub enum CharacterOperationItem {
     need: UndoOrRedo,
     cur_class: &'static Class,
     cur_lvl: i32,
+    is_max: bool,
   },
   ChangeClass {
     need: UndoOrRedo,
     prev_class: &'static Class,
+    prev_lv: i32,
+    prev_is_max: bool,
     dst_class: &'static Class,
+    dst_lv: i32,
   },
 }
 

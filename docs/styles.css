@@ -707,6 +707,15 @@ select:focus {
   justify-content: flex-start;
 }
 
+.historyItem > span {
+  text-align: left;
+}
+
+.secondaryText .limitReached {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
+}
+
 .secondaryText {
   font-size: 0.9rem;
   --tw-text-opacity: 1;
