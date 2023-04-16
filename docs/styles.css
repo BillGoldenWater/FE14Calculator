@@ -584,10 +584,6 @@ video {
   gap: 0.5rem;
 }
 
-.panelMsg {
-  padding: 1rem;
-}
-
 .panelMsgPlaceholder {
   --tw-text-opacity: 1;
   color: rgb(148 163 184 / var(--tw-text-opacity));
@@ -690,12 +686,6 @@ select:focus {
   color: rgb(74 222 128 / var(--tw-text-opacity));
 }
 
-.maximumLabel {
-  font-size: 0.8rem;
-  --tw-text-opacity: 1;
-  color: rgb(148 163 184 / var(--tw-text-opacity));
-}
-
 .horizontalBox {
   display: flex;
   justify-content: space-between;
@@ -715,4 +705,10 @@ select:focus {
 .historyItem {
   display: flex;
   justify-content: flex-start;
+}
+
+.secondaryText {
+  font-size: 0.9rem;
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
 }

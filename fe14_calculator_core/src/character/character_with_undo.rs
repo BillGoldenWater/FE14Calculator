@@ -51,22 +51,23 @@ impl CharacterWithUndo {
 
   pub fn get_operations(&self) -> Vec<CharacterOperationItem> {
     let mut character = self.character.clone();
+
+    let cur_class = Class::find(&character.cur_attribute.class).unwrap();
     let mut operation_items = vec![CharacterOperationItem::LevelUp {
+      cur_class,
       cur_lvl: character.get_lv(),
       need: UndoOrRedo::Undo(self.operations.len() as i32),
-      enhanced: false,
-      doubled: false,
     }];
 
     let mut do_operation = |op: &CharacterOperation, need: UndoOrRedo| match op {
       CharacterOperation::LevelUp { enhanced, doubled } => {
+        let cur_class = Class::find(&character.cur_attribute.class).unwrap();
         let _ = character.level_up(*enhanced, *doubled);
         operation_items.push(CharacterOperationItem::LevelUp {
           need,
 
+          cur_class,
           cur_lvl: character.get_lv(),
-          enhanced: *enhanced,
-          doubled: *doubled,
         })
       }
       CharacterOperation::ChangeClass(dst_class) => {
@@ -123,9 +124,8 @@ enum CharacterOperation {
 pub enum CharacterOperationItem {
   LevelUp {
     need: UndoOrRedo,
+    cur_class: &'static Class,
     cur_lvl: i32,
-    enhanced: bool,
-    doubled: bool,
   },
   ChangeClass {
     need: UndoOrRedo,

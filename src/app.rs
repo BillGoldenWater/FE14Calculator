@@ -12,6 +12,7 @@ use fe14_calculator_core::character::character_with_undo::{
 use fe14_calculator_core::character::{Character, CHARACTERS};
 use fe14_calculator_core::class::{Class, CLASSES};
 use fe14_calculator_core::stats::Stats;
+use fe14_calculator_core::utils::get_pure_name;
 
 //noinspection DuplicatedCode
 #[component]
@@ -59,16 +60,6 @@ pub fn App(cx: Scope) -> impl IntoView {
         }
       }
       *character = CharacterWithUndo::new(character.get().init().unwrap());
-    })
-  };
-  let undo = move |_| {
-    rw_character.update(|character| {
-      character.undo();
-    })
-  };
-  let redo = move |_| {
-    rw_character.update(|character| {
-      character.redo();
     })
   };
 
@@ -142,7 +133,7 @@ pub fn App(cx: Scope) -> impl IntoView {
       <div class="panel">
         <div>
           <div class="statItem">
-            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span><span class="maximumLabel">"/"{lv_max}</span></span>
+            <span>"LV: "<span class={lvlLimitReachedClass}>{lv}</span><span class="secondaryText">"/"{lv_max}</span></span>
           </div>
           <div class="horizontalBox">
             <div class="statItem">"隐藏LV: "{hlv}</div>
@@ -151,15 +142,9 @@ pub fn App(cx: Scope) -> impl IntoView {
         </div>
       </div>
       <div class="panel horizontalBox">
-        <div class="horizontalBox">
-          <div class="verticalBox">
-            <button on:click=lvl_up>"升级"</button>
-            <button on:click=reset>"重置"</button>
-          </div>
-          <div class="verticalBox">
-            <button on:click=undo>"撤销"</button>
-            <button on:click=redo>"重做"</button>
-          </div>
+        <div class="verticalBox">
+          <button on:click=lvl_up>"升级"</button>
+          <button on:click=reset>"重置"</button>
         </div>
         <div>
           <div class="inputItem">
@@ -173,7 +158,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         </div>
       </div>
       <Stats character=Signal::derive(cx, character)/>
-      <div class="panel panelMsg">
+      <div class="panel">
         <OperationHistory rw_character=rw_character/>
       </div>
     </div>
@@ -201,7 +186,7 @@ fn Stats(cx: Scope, #[prop(into)] character: Signal<Character>) -> impl IntoView
             <span>{k}": "</span>
             <span>
               <span class={limitReachedClass}>{format!("{:.2}", stat as f64 / 100.0)}</span>
-              <span class="maximumLabel">"/"{limit / 100}</span>
+              <span class="secondaryText">"/"{limit / 100}</span>
             </span>
           </div>
         }
@@ -228,23 +213,28 @@ fn OperationHistory(cx: Scope, rw_character: RwSignal<CharacterWithUndo>) -> imp
         let (need, text) = match it {
           CharacterOperationItem::LevelUp {
             need,
+            cur_class,
             cur_lvl,
-            enhanced,
-            doubled,
           } => (
             need,
             format!(
-              "{prev_lvl} -> {cur_lvl} 星玉: {enhanced} 努力: {doubled}",
-              prev_lvl = cur_lvl - 1,
-              enhanced = if enhanced { "是" } else { "否" },
-              doubled = if doubled { "是" } else { "否" },
+              "{} Lv. {prev_lvl} -> {cur_lvl}",
+              get_pure_name(&cur_class.name),
+              prev_lvl = (cur_lvl - 1).max(1),
             ),
           ),
           CharacterOperationItem::ChangeClass {
             need,
             prev_class,
             dst_class,
-          } => (need, format!("{} -> {}", prev_class.name, dst_class.name)),
+          } => (
+            need,
+            format!(
+              "{} -> {}",
+              get_pure_name(&prev_class.name),
+              get_pure_name(&dst_class.name)
+            ),
+          ),
         };
 
         let (num, move_one): (i32, fn(&mut CharacterWithUndo) -> ()) = match need {
@@ -263,7 +253,7 @@ fn OperationHistory(cx: Scope, rw_character: RwSignal<CharacterWithUndo>) -> imp
 
         view! { cx,
           <button class="historyItem" on:click=move_to>
-            <span class={if is_current {"limitReached"} else {""}}>
+            <span class={if is_current {""} else {"secondaryText"}}>
               {text}
             </span>
           </button>

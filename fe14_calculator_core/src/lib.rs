@@ -8,6 +8,7 @@ pub mod character;
 pub mod class;
 pub mod class_type;
 pub mod stats;
+pub mod utils;
 
 #[cfg(test)]
 mod tests {

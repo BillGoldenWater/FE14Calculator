@@ -39,10 +39,6 @@
   @apply flex flex-row gap-2 items-center
 }
 
-.panelMsg {
-  @apply p-4;
-}
-
 .panelMsgPlaceholder {
   @apply text-slate-400;
 }
@@ -81,11 +77,6 @@ select {
   @apply text-green-400;
 }
 
-.maximumLabel {
-  font-size: 0.8rem;
-  @apply text-slate-400;
-}
-
 .horizontalBox {
   @apply flex justify-between;
 }
@@ -100,4 +91,9 @@ select {
 
 .historyItem {
   @apply flex justify-start;
+}
+
+.secondaryText {
+  font-size: 0.9rem;
+  @apply text-slate-400;
 }
